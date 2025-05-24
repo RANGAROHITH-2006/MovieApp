@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movieapp/Screens/detailspage.dart';
-import 'package:movieapp/Screens/social_media.dart';
+import 'package:movieapp/Screens/detailedpages/detailspage.dart';
+import 'package:movieapp/Screens/moviescreens/social_media.dart';
 // import 'package:movieapp/models/original_search_model.dart';
 import 'package:movieapp/providers/original_provider.dart';
 
@@ -33,6 +33,7 @@ class SearchMovie extends ConsumerWidget {
     // ];
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           'Movies',
           style: TextStyle(
@@ -107,6 +108,7 @@ class SearchMovie extends ConsumerWidget {
                               OriginalMovie.posterPath,
                               OriginalMovie.title,
                               OriginalMovie.overview,
+                              '',
                             ),
                       ),
                     );

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:http/http.dart' as ref;
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movieapp/providers/login_provider.dart';
-import 'package:movieapp/shared_utils.dart';
+import 'package:movieapp/supabase_credentials/authentication_notifier.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -15,19 +12,19 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _namecontroller = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordcontroller = TextEditingController();
 
   @override
   void dispose() {
-    _namecontroller.dispose();
+    _emailController.dispose();
     _passwordcontroller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(loginProvider);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -60,22 +57,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     const Text(
-                      'USERNAME',
+                      'Email',
                       style: TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
-                      controller: _namecontroller,
+                      controller: _emailController,
                       decoration: const InputDecoration(
-                        labelText: 'Name',
-                        hintText: 'Enter your Name',
+                        labelText: 'Email',
+                        hintText: 'Enter your Email',
                         border: OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.grey,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Please enter username";
+                          return "Please enter Email";
                         }
                         return null;
                       },
@@ -107,52 +104,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    state.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                final controller = ref.read(
-                                  loginProvider.notifier,
-                                );
-                                final details = await controller.login(
-                                  _namecontroller.text,
-                                  _passwordcontroller.text,
-                                );
-
-                                final token =
-                                    await SharedPreferencesUtil.getAuthToken();
-
-                                if (details) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Login Successful'),
-                                    ),
-                                  );
-                                  context.go('/home_Screen');
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Invalid credentials'),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            child: const Text(
-                              'Login',
-                              style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
+                     if (authState.loading)
+              const Center(child: CircularProgressIndicator())
+            else
+             Center(child: ElevatedButton(
+                onPressed: () async {
+                  final email = _emailController.text.trim();
+                  final password = _passwordcontroller.text.trim();
+                  final success = await ref.read(authProvider.notifier).login(email, password);
+                  if (success && mounted) {
+                    context.go('/home_Screen');
+                  }
+                },
+                child: const Text('Login'),
+              ),),
+              SizedBox(height: 20),
+              Center(child:  TextButton(
+              onPressed: () {
+                context.push('/signupScreen');
+              },
+              child: const Text("Don't have an account? Sign Up"),
+            )),SizedBox(height: 15),
+              if (authState.error != null)
+              Center(child:
+              Text(authState.error!, style: const TextStyle(color: Colors.red))),
                   ],
                 ),
               ),

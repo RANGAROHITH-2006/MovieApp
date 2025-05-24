@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:movieapp/Screens/router.dart';
-// import 'package:movieapp/Screens/no_result.dart';
-// import 'package:movieapp/accounts_screen.dart';
-// import 'package:movieapp/loding.dart';
-// import 'package:movieapp/Screens/home_Screen.dart';
-// import 'package:movieapp/Screens/movies_screen.dart';
-// import 'package:movieapp/Screens/searchInput.dart';
-// import 'package:movieapp/Screens/search_movie.dart';
+import 'package:movieapp/router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(ProviderScope(child: MyApp()));
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://jjnppkexcwcnivkupbfi.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqbnBwa2V4Y3djbml2a3VwYmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5NzAyMDMsImV4cCI6MjA2MjU0NjIwM30.oxgf-0nSxVKQQhkTqRHdTHBfpl54JWU3zz9-Emd8sGQ',
+  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Movies',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),

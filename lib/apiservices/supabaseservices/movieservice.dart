@@ -1,0 +1,78 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class MovieServices{
+   static Future getTeluguMovies() async{
+      try{
+        var response = await Supabase.instance.client.from('Telugu').select().withConverter((data) => data);;
+        print(response);
+      }catch (e){
+        print(e.toString());
+      }
+    }
+
+    static Future getHindiMovies() async{
+      try{
+        var response = await Supabase.instance.client.from('Hindi').select().withConverter((data) => data);;
+        print(response);
+      }catch (e){
+        print(e.toString());
+      }
+    }
+
+
+    static Future getEnglishMovies() async{
+      try{
+        var response = await Supabase.instance.client.from('English').select().withConverter((data) => data);;
+        print(response);
+      }catch (e){
+        print(e.toString());
+      }
+    }
+
+
+    static Future getFavoriteMovies() async{
+      try{
+        var response = await Supabase.instance.client.from('Favorite').select().withConverter((data) => data);;
+        print(response);
+      }catch (e){
+        print(e.toString());
+      }
+    }
+
+
+   static Future<String> addMovie(Map<String, dynamic> movie) async {
+     final title = movie['title'];
+
+      final existing = await Supabase.instance.client
+      .from('Favorite')
+      .select()
+      .eq('title', title)
+      .maybeSingle(); 
+
+  if (existing != null) {
+    return 'Movie already exists';
+  }
+    await Supabase.instance.client.from('Favorite').insert(movie);
+    return 'Movie added to Favorites';
+  } 
+
+
+  
+  
+  static Future<String> removeMovie(Map<String, dynamic> movie) async {
+     final title = movie['title'];
+
+      final existing = await Supabase.instance.client
+      .from('Favorite')
+      .select()
+      .eq('title', title)
+      .maybeSingle(); 
+
+  if (existing != null) {
+     await Supabase.instance.client.from('Favorite').delete().eq('title',title);
+    return 'Movie removed from Favorites';
+  }
+    
+    return 'Movie not in Favorites';
+  } 
+}
