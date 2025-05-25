@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/moviescreens/searchInput.dart';
+import 'package:movieapp/Screens/moviescreens/social_media.dart';
 import 'package:movieapp/apiservices/supabaseservices/movieservice.dart';
-import 'package:movieapp/providers/supabaseprovider/favoritemovie.dart';
+
+import 'package:movieapp/providers/supabaseprovider/mymoviedprovider.dart';
 
 class AddMoviePage extends ConsumerStatefulWidget {
   const AddMoviePage({super.key});
@@ -29,12 +31,12 @@ class _AddMoviePageState extends ConsumerState<AddMoviePage> {
         'overview': overviewController.text,
         'genre': genreController.text,
       };
-        await MovieServices.addMovie(movie);
-        ref.refresh(favoritemoviesProvider);
+        
       try {
-        await MovieServices.addMovie(movie);
+        await MovieServices.addMyMovie(movie);
+        ref.refresh(MymoviesProvider);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Movie added')),
+          const SnackBar(content: Text('Movie added to MyMovies')),
         );
         Navigator.pop(context);
       } catch (e) {
@@ -100,12 +102,29 @@ class _AddMoviePageState extends ConsumerState<AddMoviePage> {
             TextField(controller: genreController, decoration: const InputDecoration(labelText: 'Genre')),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: submit,
+              onPressed: (){
+                if(titleController.text.isNotEmpty &&
+      imageController.text.isNotEmpty &&
+      videoController.text.isNotEmpty) {
+          if(imageController.text.isNotEmpty && Uri.tryParse(imageController.text)?.hasAbsolutePath == true){
+              submit();
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill Valid Image url')));
+          }
+                    
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill in Title, Image, and Video'))
+                  );
+                }
+              },
               child: const Text('Add Movie'),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: SocialMedia(),
     );
   }
 }

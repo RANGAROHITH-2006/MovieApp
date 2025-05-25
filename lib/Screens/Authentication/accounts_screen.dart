@@ -3,8 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/moviescreens/social_media.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
+
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +99,7 @@ class AccountScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Member ship',
-                    style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold ),
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 20),
 
@@ -125,20 +132,29 @@ class AccountScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 20),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'Ultra HD',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isSelected = !isSelected;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.blue : Colors.transparent,
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Ultra HD',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected ? Colors.white : Colors.black,
+                            ),
                           ),
                         ),
                       ),

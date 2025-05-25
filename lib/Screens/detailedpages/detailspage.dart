@@ -9,21 +9,21 @@ import 'package:movieapp/Screens/moviescreens/searchInput.dart';
 import 'package:movieapp/Screens/moviescreens/social_media.dart';
 import 'package:movieapp/apiservices/supabaseservices/movieservice.dart';
 import 'package:movieapp/providers/supabaseprovider/favoritemovie.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Detailspage extends ConsumerStatefulWidget {
   final String image;
   final String title;
   final String overview;
-   final String video;
-  Detailspage(this.image, this.title, this.overview,this.video, {super.key});
+  final String video;
+  Detailspage(this.image, this.title, this.overview, this.video, {super.key});
 
   @override
   ConsumerState<Detailspage> createState() => _Detailspage();
 }
 
 class _Detailspage extends ConsumerState<Detailspage> {
-
-final overview =
+  final overview =
       "Movies tell stories, explore human experiences, and offer entertainment through the medium of moving images";
 
   final List<Map<String, String>> popularMovies = [
@@ -67,11 +67,23 @@ final overview =
 
   bool heart = false;
 
-  void onclick(){
-    setState(() {
-      heart =!heart;
-    });
-  }
+@override
+void initState() {
+  super.initState();
+  checkInFavorite();
+}
+
+Future<void> checkInFavorite() async {
+  final existing = await Supabase.instance.client
+      .from('Favorite')
+      .select()
+      .eq('title', widget.title)
+      .maybeSingle();
+
+  setState(() {
+    heart = existing != null;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +186,15 @@ final overview =
                         SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context,
-                             MaterialPageRoute(
-                builder: (contex) => YouTubeVideoScreen(
-                  videoUrl: widget.video,  
-                ),));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (contex) => YouTubeVideoScreen(
+                                      videoUrl: widget.video,
+                                    ),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -235,7 +251,7 @@ final overview =
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                           color: Colors.red,
+                            color: Colors.red,
                           ),
                         ),
                         Text(
@@ -277,54 +293,60 @@ final overview =
                         ),
                         Row(
                           children: [
-                              Text('Like',style: TextStyle(color: Colors.white,fontSize: 15),),
-                              SizedBox(width: 15),
-                              IconButton(
-            onPressed: () async {
-              
-              final movie={
-              'title': widget.title,
-              'image':  widget.image,
-              'video': widget.video, 
-              'overview': widget.overview,
-              };
-              
-              ref.invalidate(favoritemoviesProvider);
-      if (heart){      
-      try {
-        final message = await MovieServices.addMovie(movie);
-        ref.refresh(favoritemoviesProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(message)),
-        );
-        Navigator.pop(context);
-      } catch (e) {
-        print('Error adding movie: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error adding movie')),
-        );
-      }}else{
-        try {
-        final message = await MovieServices.removeMovie(movie);
-        ref.refresh(favoritemoviesProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(message)),
-        );
-        Navigator.pop(context);
-      } catch (e) {
-        print('Error adding movie: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error adding movie')),
-        );}
-      }
-      
-      onclick();
-            },
-            icon: Icon(heart ? Icons.favorite : Icons.favorite_border, color: Colors.white, size: 20),
-          ),
+                            Text(
+                              'Like',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(width: 15),
+                            IconButton(
+                              onPressed: () async {
+                                final movie = {
+                                  'title': widget.title,
+                                  'image': widget.image,
+                                  'video': widget.video,
+                                  'overview': widget.overview,
+                                };
+                                setState(() {
+                                  heart = !heart;
+                                });
+
+                                try {
+                                  if (heart) {
+                                    final message =
+                                        await MovieServices.addMovie(movie);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)),
+                                    );
+                                  } else {
+                                    final message =
+                                        await MovieServices.removeMovie(movie);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)),
+                                    );
+                                  }
+
+                                  ref.invalidate(favoritemoviesProvider);
+                                } catch (e) {
+                                  print('Favorite toggle failed: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Something went wrong'),
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: Icon(
+                                heart ? Icons.favorite : Icons.favorite_border,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
                           ],
                         ),
-                        
+
                       ],
                     ),
                   ],
@@ -364,47 +386,49 @@ final overview =
   }
 
   Widget imageList(List<Map<String, dynamic>> trendingImages) {
-  return Container(
-    height: 120,
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: trendingImages.length,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemBuilder: (context, index) {
-        final movie = trendingImages[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Detailspage2(
-                  movie['image'] ?? '',
-                  movie['title'] ?? '',
-                  movie['overview'] ?? '',
-                  movie['video'] ?? '',
+    return Container(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: trendingImages.length,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemBuilder: (context, index) {
+          final movie = trendingImages[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => Detailspage2(
+                        movie['image'] ?? '',
+                        movie['title'] ?? '',
+                        movie['overview'] ?? '',
+                        movie['video'] ?? '',
+                      ),
                 ),
-              ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                movie['image'] ?? '',
-                width: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  movie['image'] ?? '',
                   width: 120,
-                  color: Colors.grey,
-                  child: Icon(Icons.broken_image),
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) => Container(
+                        width: 120,
+                        color: Colors.grey,
+                        child: Icon(Icons.broken_image),
+                      ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    ),
-  );
-}
+          );
+        },
+      ),
+    );
+  }
 }

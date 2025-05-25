@@ -198,6 +198,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
+                  PopupMenuItem(
+                    onTap: () {
+                      context.push('/mymovies');
+                    },
+
+                    child: Text(
+                      'MyMovies',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ],
           ),
         ],

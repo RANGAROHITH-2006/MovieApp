@@ -7,8 +7,6 @@ import 'package:movieapp/Screens/moviescreens/social_media.dart';
 import 'package:movieapp/providers/supabaseprovider/hindiprovider.dart';
 
 
-
-
 class HindiMovieScreen extends ConsumerWidget {
   const HindiMovieScreen({super.key});
 
@@ -63,6 +61,19 @@ class HindiMovieScreen extends ConsumerWidget {
         data: (movies) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
+            child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Hindi Movies',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
             child: GridView.builder(
               itemCount: movies.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -91,7 +102,7 @@ class HindiMovieScreen extends ConsumerWidget {
                 );
               },
             ),
-          );
+          )]));
         },
         error: (error, stack) => Text(error.toString()),
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/detailedpages/detailspage2.dart';
-import 'package:movieapp/Screens/moviescreens/social_media.dart';
 import 'package:movieapp/supabaseScreens/telugu.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 

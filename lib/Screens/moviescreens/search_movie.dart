@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/detailedpages/detailspage.dart';
 import 'package:movieapp/Screens/moviescreens/social_media.dart';
 // import 'package:movieapp/models/original_search_model.dart';
-import 'package:movieapp/providers/original_provider.dart';
+import 'package:movieapp/providers/apiprovider/original_provider.dart';
 
 class SearchMovie extends ConsumerWidget {
   const SearchMovie({super.key});

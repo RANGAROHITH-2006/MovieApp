@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/moviescreens/searchInput.dart';
 import 'package:movieapp/Screens/moviescreens/social_media.dart';
 
-import 'package:movieapp/providers/treanding_provider.dart';
+import 'package:movieapp/providers/apiprovider/treanding_provider.dart';
 
 class MovieScreen extends ConsumerWidget {
   const MovieScreen({super.key});

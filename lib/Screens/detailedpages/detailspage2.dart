@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/detailedpages/detailspage.dart';
@@ -6,8 +7,11 @@ import 'package:movieapp/Screens/detailedpages/videoscreen.dart';
 import 'package:movieapp/Screens/moviescreens/movies_screen.dart';
 import 'package:movieapp/Screens/moviescreens/searchInput.dart';
 import 'package:movieapp/Screens/moviescreens/social_media.dart';
+import 'package:movieapp/apiservices/supabaseservices/movieservice.dart';
+import 'package:movieapp/providers/supabaseprovider/favoritemovie.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class Detailspage2 extends StatefulWidget {
+class Detailspage2 extends ConsumerStatefulWidget {
   final String image;
   final String title;
   final String overview;
@@ -15,10 +19,10 @@ class Detailspage2 extends StatefulWidget {
   Detailspage2(this.image, this.title, this.overview,this.video, {super.key});
 
   @override
-  State<Detailspage2> createState() => _Detailspage2();
+  ConsumerState<Detailspage2> createState() => _Detailspage2();
 }
 
-class _Detailspage2 extends State<Detailspage2> {
+class _Detailspage2 extends ConsumerState<Detailspage2> {
 
 final overview =
       "Movies tell stories, explore human experiences, and offer entertainment through the medium of moving images";
@@ -60,6 +64,27 @@ final overview =
       "video": "https://example.com/videos/bhairavam.mp4",
     },
   ];
+
+
+   bool heart = false;
+
+@override
+void initState() {
+  super.initState();
+  checkInFavorite();
+}
+
+Future<void> checkInFavorite() async {
+  final existing = await Supabase.instance.client
+      .from('Favorite')
+      .select()
+      .eq('title', widget.title)
+      .maybeSingle();
+
+  setState(() {
+    heart = existing != null;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -264,10 +289,67 @@ final overview =
                           '4.8',
                           style: TextStyle(color: Colors.white, fontSize: 13),
                         ),
+                    Row(
+                          children: [
+                            Text(
+                              'Like',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(width: 15),
+                            IconButton(
+                              onPressed: () async {
+                                final movie = {
+                                  'title': widget.title,
+                                  'image': widget.image,
+                                  'video': widget.video,
+                                  'overview': widget.overview,
+                                };
+                                setState(() {
+                                  heart = !heart;
+                                });
+
+                                try {
+                                  if (heart) {
+                                    final message =
+                                        await MovieServices.addMovie(movie);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)),
+                                    );
+                                  } else {
+                                    final message =
+                                        await MovieServices.removeMovie(movie);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)),
+                                    );
+                                  }
+
+                                  ref.invalidate(favoritemoviesProvider);
+                                } catch (e) {
+                                  print('Favorite toggle failed: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Something went wrong'),
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: Icon(
+                                heart ? Icons.favorite : Icons.favorite_border,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+
                       ],
                     ),
                   ],
                 ),
+  
               ),
               heading('More like this'),
               imageList(trendingMovies),

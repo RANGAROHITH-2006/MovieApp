@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/moviescreens/movies_screen.dart';
 import 'package:movieapp/Screens/moviescreens/search_movie.dart';
 import 'package:movieapp/Screens/moviescreens/social_media.dart';
-import 'package:movieapp/providers/search_provider.dart';
+import 'package:movieapp/providers/apiprovider/search_provider.dart';
 
 class SearchInput extends ConsumerStatefulWidget {
   SearchInput({super.key});

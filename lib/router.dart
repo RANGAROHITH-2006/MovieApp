@@ -8,6 +8,7 @@ import 'package:movieapp/supabaseScreens/english.dart';
 import 'package:movieapp/supabaseScreens/hindi.dart';
 import 'package:movieapp/supabaseScreens/myfavorite.dart';
 import 'package:movieapp/Screens/moviescreens/searchInput.dart';
+import 'package:movieapp/supabaseScreens/mymovies.dart';
 import 'package:movieapp/supabaseScreens/telugu.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -19,6 +20,7 @@ final route = GoRouter(
     GoRoute(path: '/telugu', builder: (context, state) => TeluguMovieScreen()),
     GoRoute(path: '/english', builder: (context, state) => EnglishMovieScreen()),
     GoRoute(path: '/hindi', builder: (context, state) => HindiMovieScreen()),
+    GoRoute(path: '/mymovies', builder: (context, state) => MyMovies()),
     GoRoute(path: '/loginScreen', builder: (context, state) => LoginScreen()),
     GoRoute(path: '/signupScreen', builder: (context, state) => SignupScreen()),
     GoRoute(path: '/home_Screen', builder: (context, state) => HomeScreen()),
