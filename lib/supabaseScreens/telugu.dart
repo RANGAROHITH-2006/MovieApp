@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movieapp/Screens/moviescreens/searchInput.dart';
-import 'package:movieapp/Screens/moviescreens/social_media.dart';
+import 'package:movieapp/Screens/detailedpages/static/social_media.dart';
 import 'package:movieapp/providers/supabaseprovider/teluguprovider.dart';
 
 class TeluguMovieScreen extends ConsumerWidget {
@@ -16,14 +15,19 @@ class TeluguMovieScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        titleSpacing: 0, 
+        title: TextButton(
+          onPressed: (){
+            context.push('/home_Screen');
+          },
+          child: Text(
           'Movies',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.red,
           ),
-        ),
+        )),
         actions: [
           Column(
             children: [
@@ -32,10 +36,7 @@ class TeluguMovieScreen extends ConsumerWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SearchInput()),
-                      );
+                      context.push('/searchInput');
                     },
                     icon: Icon(Icons.search, color: Colors.white, size: 25),
                   ),

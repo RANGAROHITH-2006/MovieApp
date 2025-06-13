@@ -17,24 +17,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final supabase = Supabase.instance.client;
 
   Future<bool> login(String email, String password) async {
-    state = AuthState(loading: true);
-    try {
-      final response = await supabase.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
-      if (response.user != null) {
-        state = AuthState();
-        return true;
-      } else {
-        state = AuthState(error: "Invalid credentials.");
-        return false;
-      }
-    } on AuthException catch (e) {
-      state = AuthState(error: e.message);
-      return false;
-    }
+  try {
+    final res = await Supabase.instance.client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+    print("Login success: ${res.session?.accessToken}");
+    return res.user != null;
+  } catch (e) {
+    print("Error during login: $e");
+    return false;
   }
+}
+
 
   Future<bool> signup(String email, String password) async {
     state = AuthState(loading: true);

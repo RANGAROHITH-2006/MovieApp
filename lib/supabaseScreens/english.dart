@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movieapp/Screens/moviescreens/searchInput.dart';
-import 'package:movieapp/Screens/moviescreens/social_media.dart';
+import 'package:movieapp/Screens/detailedpages/static/social_media.dart';
 import 'package:movieapp/providers/supabaseprovider/englishprovider.dart';
 
 class EnglishMovieScreen extends ConsumerWidget {
@@ -12,18 +11,22 @@ class EnglishMovieScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final englishmovies = ref.watch(englishmoviesProvider);
-
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        titleSpacing: 0, 
+        title: TextButton(
+          onPressed: (){
+            context.push('/home_Screen');
+          },
+          child: Text(
           'Movies',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.red,
           ),
-        ),
+        )),
         actions: [
           Column(
             children: [
@@ -31,11 +34,8 @@ class EnglishMovieScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SearchInput()),
-                      );
+                   onPressed: () {
+                      context.push('/searchInput');
                     },
                     icon: Icon(Icons.search, color: Colors.white, size: 25),
                   ),

@@ -108,4 +108,15 @@ static Future<String> addMyMovie(Map<String, dynamic> movie) async {
     }
 
 
+
+    Future<List<Map<String, dynamic>>> searchMovies(String query) async {
+    if (query.isEmpty) return [];
+
+    final response = await Supabase.instance.client
+        .from('all_movies')
+        .select()
+        .ilike('title', '%$query%');
+
+    return List<Map<String, dynamic>>.from(response);
+  }
 }

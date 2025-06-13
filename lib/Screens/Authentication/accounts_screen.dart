@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movieapp/Screens/moviescreens/social_media.dart';
+import 'package:movieapp/Screens/detailedpages/static/social_media.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -20,14 +20,18 @@ class _AccountScreenState extends State<AccountScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        title: TextButton(
+          onPressed: (){
+            context.go('/home_Screen');
+          },
+          child: Text(
           'Movies',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.red,
           ),
-        ),
+        )),
         backgroundColor: Colors.black,
         actions: [
           IconButton(
