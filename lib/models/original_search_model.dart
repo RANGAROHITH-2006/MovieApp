@@ -1,4 +1,3 @@
-// import 'package:meta/meta.dart';
 import 'dart:convert';
 
 class OriginalMovie {
@@ -17,7 +16,7 @@ class OriginalMovie {
         OriginalMovie(
             results: results ?? this.results,
             total: total ?? this.total,
-        );
+       );
 
     factory OriginalMovie.fromRawJson(String str) => OriginalMovie.fromJson(json.decode(str));
 

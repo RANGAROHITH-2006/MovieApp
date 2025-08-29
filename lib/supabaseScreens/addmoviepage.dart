@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/detailedpages/static/social_media.dart';
 import 'package:movieapp/apiservices/supabaseservices/movieservice.dart';
-
 import 'package:movieapp/providers/supabaseprovider/mymoviedprovider.dart';
 
 class AddMoviePage extends ConsumerStatefulWidget {

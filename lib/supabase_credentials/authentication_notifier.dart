@@ -16,6 +16,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   final supabase = Supabase.instance.client;
 
+
+
+
   Future<bool> login(String email, String password) async {
   try {
     final res = await Supabase.instance.client.auth.signInWithPassword(

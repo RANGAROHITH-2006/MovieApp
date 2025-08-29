@@ -1,25 +1,25 @@
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movieapp/Screens/detailedpages/detailspage.dart';
 import 'package:movieapp/Screens/detailedpages/detailspage2.dart';
 import 'package:movieapp/Screens/detailedpages/static/movies_list.dart';
 import 'package:movieapp/Screens/detailedpages/static/movies_section.dart';
 import 'package:movieapp/Screens/detailedpages/static/social_media.dart';
+import 'package:movieapp/providers/supabaseprovider/latestmoviesprovider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-class _HomeScreenState extends State<HomeScreen> {
-  final overview =
-      "Movies tell stories, explore human experiences, and offer entertainment through the medium of moving images";
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final latestMoviesAsync = ref.watch(latestMoviesProvider);
+    final popularMoviesAsync = ref.watch(popularMoviesProvider);
+    
+    final overview =
+        "Movies tell stories, explore human experiences, and offer entertainment through the medium of moving images";
+        
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -190,41 +190,71 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }).toList(),
               ),
-              MoviesSection(
-                title: 'Trending Movies',
-                movies: trendingMovies,
-                onMovieTap: (movie) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => Detailspage(
-                            movie['image'] ?? '',
-                            movie['title'] ?? '',
-                            movie['overview'] ?? '',
-                            movie['video'] ?? '',
-                          ),
+              // Latest Movies Section
+              latestMoviesAsync.when(
+                data: (latestMovies) => MoviesSection(
+                  title: 'Latest Movies',
+                  movies: latestMovies,
+                  onMovieTap: (movie) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Detailspage(
+                          movie['image'] ?? '',
+                          movie['title'] ?? '',
+                          movie['overview'] ?? '',
+                          movie['video'] ?? '',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                loading: () => Container(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (error, stack) => Container(
+                  height: 200,
+                  child: Center(
+                    child: Text(
+                      'Error loading latest movies: $error',
+                      style: TextStyle(color: Colors.red),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
-              MoviesSection(
-                title: 'Popular Movies',
-                movies: popularMovies,
-                onMovieTap: (movie) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => Detailspage2(
-                            movie['image'] ?? '',
-                            movie['title'] ?? '',
-                            movie['overview'] ?? '',
-                            movie['video'] ?? '',
-                          ),
+              // Popular Movies Section  
+              popularMoviesAsync.when(
+                data: (popularMovies) => MoviesSection(
+                  title: 'Popular Movies',
+                  movies: popularMovies,
+                  onMovieTap: (movie) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Detailspage2(
+                          movie['image'] ?? '',
+                          movie['title'] ?? '',
+                          movie['overview'] ?? '',
+                          movie['video'] ?? '',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                loading: () => Container(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (error, stack) => Container(
+                  height: 200,
+                  child: Center(
+                    child: Text(
+                      'Error loading popular movies: $error',
+                      style: TextStyle(color: Colors.red),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
               MoviesSection(
                 title: 'Most Watched',
