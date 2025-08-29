@@ -16,23 +16,34 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   final supabase = Supabase.instance.client;
 
-
-
-
   Future<bool> login(String email, String password) async {
-  try {
-    final res = await Supabase.instance.client.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-    print("Login success: ${res.session?.accessToken}");
-    return res.user != null;
-  } catch (e) {
-    print("Error during login: $e");
-    return false;
+    state = AuthState(loading: true);
+    try {
+      final res = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      print("Login success: ${res.session?.accessToken}");
+      if (res.user != null) {
+        state = AuthState();
+        return true;
+      } else {
+        state = AuthState(
+          error: "Login failed. Please check your credentials.",
+        );
+        return false;
+      }
+    } on AuthException catch (e) {
+      state = AuthState(error: e.message);
+      return false;
+    } catch (e) {
+      print("Error during login: $e");
+      state = AuthState(
+        error: "An unexpected error occurred. Please try again.",
+      );
+      return false;
+    }
   }
-}
-
 
   Future<bool> signup(String email, String password) async {
     state = AuthState(loading: true);
@@ -41,7 +52,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         email: email,
         password: password,
       );
-      if (response.user == null || (response.user?.identities?.isEmpty ?? true)) {
+      if (response.user == null ||
+          (response.user?.identities?.isEmpty ?? true)) {
         state = AuthState(error: "User already exists or signup failed.");
         return false;
       }
@@ -49,6 +61,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return true;
     } on AuthException catch (e) {
       state = AuthState(error: e.message);
+      return false;
+    } catch (e) {
+      print("Error during signup: $e");
+      state = AuthState(
+        error: "An unexpected error occurred. Please try again.",
+      );
       return false;
     }
   }

@@ -120,13 +120,12 @@ static Future<String> addMyMovie(Map<String, dynamic> movie) async {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  // Get latest 5 movies from all_movies table
+  // latest 5 movies from Telugu table
   static Future<List<Map<String, dynamic>>> getLatestMovies() async {
     try {
       final response = await Supabase.instance.client
           .from('Telugu')
           .select()
-          
           .limit(5);
 
       return List<Map<String, dynamic>>.from(response);
@@ -136,14 +135,14 @@ static Future<String> addMyMovie(Map<String, dynamic> movie) async {
     }
   }
 
-  // Get next 5 movies (offset 5) from all_movies table
+  //next 5 movies (offset 5) from all_movies table
   static Future<List<Map<String, dynamic>>> getPopularMovies() async {
     try {
       final response = await Supabase.instance.client
           .from('all_movies')
           .select()
           
-          .range(5, 9); // This will get movies 6-10 (next 5 movies)
+          .range(5, 9);
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
